@@ -7,18 +7,36 @@ class Particle {
     private double dx;
     private double dy;
     private final double t_half;
+    private Color color;
+    private final int color_id;
+    private final int interaction_radius = 100;
 
-    public Particle(int x, int y, int radius) {
+    public Particle(int x, int y, int radius, int color_id) {
         this.t_half = 0.5;
         this.x = x;
         this.y = y;
         this.radius = radius;
         this.dx = 0;
         this.dy = 0;
+        this.color_id = color_id;
+        switch (color_id){
+            case 0:
+                color = new Color(255, 0, 0);
+                break;
+            case 1:
+                color = new Color(0, 255, 102);
+                break;
+            case 2:
+                color = new Color(0, 42, 255);
+                break;
+            case 3:
+                color = new Color(255, 255, 0);
+                break;
+        }
     }
 
     public void draw(Graphics g) {
-        g.setColor(new Color(255, 0, 41));
+        g.setColor(color);
         g.fillOval((int) (x - radius), (int) (y - radius), 2 * radius, 2 * radius);
     }
 
@@ -32,15 +50,15 @@ class Particle {
         x += dx*delta;
         y += dy*delta;
 
-        if (x - radius < 0 || x + radius > panelWidth) {
+        if ((x < 0 && dx < 0) || (x > panelWidth && dx > 0)) {
             dx = -dx;
-
         }
-        if (y - radius < 0 || y + radius > panelHeight) {
+        if ((y < 0 && dy < 0) || (y > panelHeight && dy > 0)) {
             dy = -dy;
-
         }
     }
     public double getX(){return x;}
     public double getY(){return y;}
+    public int getColor_id(){return color_id;}
+    public int getInteraction_radius(){return interaction_radius;}
 }

@@ -31,6 +31,7 @@ public class Main extends JFrame {
         private final int window_width;
         private final int window_height;
         private final int color_count = 5;
+        private final int population_count = 1000;
 
         Random rand = new Random();
 
@@ -39,16 +40,9 @@ public class Main extends JFrame {
             this.window_width = window_width;
             particles = new ArrayList<>();
 
-            int population_count = 1000;
+            generateParticles("big_bang");
 
-            for (int i = 0; i < population_count; i++) {
-                int x = rand.nextInt(window_width-20);
-                int y = rand.nextInt(window_height-20);
-                int color = rand.nextInt(color_count);
-                particles.add(new Particle(x+10, y+10, 3, color));
-            }
-
-            generateColorMatrix("snake");
+            generateColorMatrix("random");
         }
 
         @Override
@@ -150,28 +144,50 @@ public class Main extends JFrame {
             }
         }
 
+        private void generateParticles(String style){
+
+            for (int i = 0; i < population_count; i++) {
+                int color = rand.nextInt(color_count);
+                if(style == "normal"){
+                    int x = rand.nextInt(window_width-20);
+                    int y = rand.nextInt(window_height-20);
+                    particles.add(new Particle(x+10, y+10, 3, color));
+                }
+                if(style == "big_bang"){
+                    int x = rand.nextInt(window_width/10);
+                    int y = rand.nextInt(window_height/10);
+                    particles.add(new Particle(x+window_width/2-window_width/20, y+window_height/2-window_height/20, 3, color));
+                }
+            }
+        }
         private void generateColorMatrix(String style){
             color_matrix = new double[color_count][color_count];
             for(int i = 0; i < color_count; i++){
                 for(int j = 0; j < color_count; j++){
-                    switch (style){
-                        case "snake":
-                            if(i==j){
-                                color_matrix[i][j] = 1;
-                            }
-                            else if(j == i+1){
-                                color_matrix[i][j] = 0.2;
-                            }
-                            else{
-                                color_matrix[i][j] = 0;
-                            }
-                            break;
-                        case "random":
-                            double plus = (Math.pow(-1, rand.nextInt(2)));
-                            color_matrix[i][j] = rand.nextDouble()*plus;
-                            break;
+                    if(style=="clumps"){
+                        if (i == j) {
+                            color_matrix[i][j] = 1;
+                        } else {
+                            color_matrix[i][j] = -1;
+                        }
+                    }
+                    if(style == "snake" || style == "infinite_snake") {
+                        if (i == j) {
+                            color_matrix[i][j] = 1;
+                        } else if (j == i + 1) {
+                            color_matrix[i][j] = 0.2;
+                        } else {
+                            color_matrix[i][j] = 0;
+                        }
+                    }
+                    else if(style== "random"){
+                        double plus = (Math.pow(-1, rand.nextInt(2)));
+                        color_matrix[i][j] = rand.nextDouble()*plus;
                     }
                 }
+            }
+            if (style == "infinite_snake"){
+                color_matrix[color_count-1][0] = 0.2;
             }
         }
     }

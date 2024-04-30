@@ -10,6 +10,7 @@ class Particle {
     private Color color;
     private final int color_id;
     private final int interaction_radius = 100;
+    private final int force_scale = 1;
 
     public Particle(int x, int y, int radius, int color_id) {
         this.x = x;
@@ -32,9 +33,9 @@ class Particle {
 
     public void updateVelocity(double force_x, double force_y, double delta){
         dx *= Math.pow(0.5, delta/t_half);
-        dx += force_x * delta;
+        dx += force_x * delta *force_scale;
         dy *= Math.pow(0.5, delta/t_half);
-        dy += force_y * delta;
+        dy += force_y * delta * force_scale;
     }
     public void move(int panelWidth, int panelHeight, double delta) {
         x += dx*delta;

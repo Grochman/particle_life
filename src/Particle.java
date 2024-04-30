@@ -6,7 +6,7 @@ class Particle {
     private final int radius;
     private double dx;
     private double dy;
-    private final double t_half = 0.1;
+    private final double t_half = 0.2;
     private Color color;
     private final int color_id;
     private final int interaction_radius = 100;

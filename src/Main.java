@@ -40,7 +40,7 @@ public class Main extends JFrame {
             this.window_width = window_width;
             particles = new ArrayList<>();
 
-            generateParticles("big_bang");
+            generateParticles("normal");
 
             generateColorMatrix("random");
         }

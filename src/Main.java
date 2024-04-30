@@ -27,36 +27,28 @@ public class Main extends JFrame {
         private final ArrayList<Particle> particles;
         private int frameCount = 0;
         private long time_fps;
-        private final double[][] color_matrix;
+        private double[][] color_matrix;
+        private final int window_width;
+        private final int window_height;
+        private final int color_count = 5;
 
-        public World(int width, int height) {
+        Random rand = new Random();
+
+        public World(int window_width, int window_height) {
+            this.window_height = window_height;
+            this.window_width = window_width;
             particles = new ArrayList<>();
-            Random rand = new Random();
 
-            int color_count = 3;
-            int population_count = 150;
+            int population_count = 1000;
 
             for (int i = 0; i < population_count; i++) {
-                int x = rand.nextInt(width-20);
-                int y = rand.nextInt(height-20);
+                int x = rand.nextInt(window_width-20);
+                int y = rand.nextInt(window_height-20);
                 int color = rand.nextInt(color_count);
-                particles.add(new Particle(x+10, y+10, 5, color));
+                particles.add(new Particle(x+10, y+10, 3, color));
             }
 
-            color_matrix = new double[color_count][color_count];
-            for(int i = 0; i < color_count; i++){
-                for(int j = 0; j < color_count; j++){
-                    if(i==j){
-                        color_matrix[i][j] = 1;
-                    }
-                    else if(j == i+1){
-                        color_matrix[i][j] = 0.5;
-                    }
-                    else{
-                        color_matrix[i][j] = 0;
-                    }
-                }
-            }
+            generateColorMatrix("snake");
         }
 
         @Override
@@ -96,8 +88,23 @@ public class Main extends JFrame {
                     }
 
                     double interaction_vector_x = neighbour.getX()-particle.getX();
+                    if (Math.abs(interaction_vector_x) > window_width/2){
+                        if(interaction_vector_x > 0){
+                            interaction_vector_x -= window_width;
+                        }
+                        else{
+                            interaction_vector_x += window_width;
+                        }
+                    }
                     double interaction_vector_y = neighbour.getY()-particle.getY();
-
+                    if (Math.abs(interaction_vector_y) > window_height/2){
+                        if(interaction_vector_y > 0){
+                            interaction_vector_y -= window_height;
+                        }
+                        else{
+                            interaction_vector_y += window_height;
+                        }
+                    }
                     double distance = Math.sqrt(Math.pow(interaction_vector_x,2)+Math.pow(interaction_vector_y,2));
 
                     interaction_vector_x /= distance;
@@ -140,6 +147,31 @@ public class Main extends JFrame {
                 System.out.println(fps);
                 frameCount = 0;
                 time_fps = currentTime;
+            }
+        }
+
+        private void generateColorMatrix(String style){
+            color_matrix = new double[color_count][color_count];
+            for(int i = 0; i < color_count; i++){
+                for(int j = 0; j < color_count; j++){
+                    switch (style){
+                        case "snake":
+                            if(i==j){
+                                color_matrix[i][j] = 1;
+                            }
+                            else if(j == i+1){
+                                color_matrix[i][j] = 0.2;
+                            }
+                            else{
+                                color_matrix[i][j] = 0;
+                            }
+                            break;
+                        case "random":
+                            double plus = (Math.pow(-1, rand.nextInt(2)));
+                            color_matrix[i][j] = rand.nextDouble()*plus;
+                            break;
+                    }
+                }
             }
         }
     }

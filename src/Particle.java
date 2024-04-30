@@ -6,33 +6,23 @@ class Particle {
     private final int radius;
     private double dx;
     private double dy;
-    private final double t_half;
+    private final double t_half = 0.1;
     private Color color;
     private final int color_id;
     private final int interaction_radius = 100;
 
     public Particle(int x, int y, int radius, int color_id) {
-        this.t_half = 0.5;
         this.x = x;
         this.y = y;
         this.radius = radius;
         this.dx = 0;
         this.dy = 0;
         this.color_id = color_id;
-        switch (color_id){
-            case 0:
-                color = new Color(255, 0, 0);
-                break;
-            case 1:
-                color = new Color(0, 255, 102);
-                break;
-            case 2:
-                color = new Color(0, 42, 255);
-                break;
-            case 3:
-                color = new Color(255, 255, 0);
-                break;
-        }
+
+        int r = (color_id)*17+100 % 256;
+        int g = (color_id+30)*59 % 256;
+        int b = (color_id+60)*29 % 256;
+        color =  new Color(r, g, b);
     }
 
     public void draw(Graphics g) {
@@ -50,13 +40,44 @@ class Particle {
         x += dx*delta;
         y += dy*delta;
 
+        //respectBounds(panelWidth,panelHeight);
+        teleportBounds(panelWidth,panelHeight);
+    }
+    private void respectBounds(int panelWidth, int panelHeight){
         if ((x < 0 && dx < 0) || (x > panelWidth && dx > 0)) {
             dx = -dx;
+            if(x<0){
+                x = 0;
+            }
+            else{
+                x = panelWidth;
+            }
         }
         if ((y < 0 && dy < 0) || (y > panelHeight && dy > 0)) {
             dy = -dy;
+            if(y<0){
+                y = 0;
+            }
+            else{
+                y = panelHeight;
+            }
         }
     }
+    private void teleportBounds(int panelWidth,int panelHeight){
+        if(x+ radius<0){
+            x = panelWidth;
+        }
+        else if(x - radius > panelWidth){
+            x = 0;
+        }
+        if(y + radius < 0){
+            y = panelHeight;
+        }
+        else if(y - radius > panelHeight){
+            y = 0;
+        }
+    }
+
     public double getX(){return x;}
     public double getY(){return y;}
     public int getColor_id(){return color_id;}
